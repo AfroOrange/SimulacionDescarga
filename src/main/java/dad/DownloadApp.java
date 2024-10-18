@@ -16,7 +16,7 @@ public class DownloadApp extends Application {
         Scene progressScene = new Scene(progressController.getRoot());
 
         Stage modificarStage = new Stage();
-        modificarStage.setTitle("Proceso de Descarga");
+        modificarStage.setTitle("Gestor de Descargas");
         modificarStage.setScene(progressScene);
         modificarStage.show();
     }

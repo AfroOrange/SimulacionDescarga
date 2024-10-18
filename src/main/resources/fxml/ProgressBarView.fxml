@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-
 <Pane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <VBox alignment="CENTER" layoutX="201.0" layoutY="41.0" spacing="40.0">
+      <VBox alignment="CENTER" layoutX="66.0" layoutY="80.0" prefHeight="300.0" prefWidth="200.0" spacing="30.0">
          <children>
             <Label text="Archivo1" />
             <ProgressBar fx:id="firstProgressBar" prefWidth="200.0" progress="0.0" />
@@ -22,5 +24,19 @@
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>
       </VBox>
+      <Button layoutX="132.0" layoutY="25.0" mnemonicParsing="false" onAction="#onDownloadAction" text="Descargar" />
+      <VBox alignment="CENTER" layoutX="316.0" layoutY="80.0" prefHeight="300.0" prefWidth="270.0" spacing="3.0">
+         <children>
+            <Label text="Proceso de descarga" />
+            <TextArea fx:id="firstProcess" editable="false" prefHeight="200.0" prefWidth="200.0" promptText="No se ha iniciado la descarga" VBox.vgrow="ALWAYS" />
+            <TextArea fx:id="secondProcess" editable="false" prefHeight="200.0" prefWidth="200.0" promptText="No se ha iniciado la descarga" />
+            <TextArea fx:id="thirdProcess" prefHeight="200.0" prefWidth="200.0" promptText="No se ha iniciado la descarga" />
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </VBox>
+      <Separator layoutX="297.0" layoutY="130.0" orientation="VERTICAL" prefHeight="200.0" />
+      <Button layoutX="425.0" layoutY="25.0" mnemonicParsing="false" onAction="#onStopAction" text="Terminar" />
    </children>
 </Pane>

@@ -1,7 +1,11 @@
 package dad;
 
 import javafx.application.Platform;
+import javafx.beans.Observable;
 import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.scene.control.TextArea;
 
 import java.util.Random;
 
@@ -11,7 +15,7 @@ public class Downloads implements Runnable {
     private final int velocidadDescarga;
     private final int pesoArchivo;
     private final IntegerProperty progressProperty;
-
+    private StringProperty processProperty;
 
     @Override
     public void run() {
@@ -38,7 +42,7 @@ public class Downloads implements Runnable {
                 final int progresoPercentage = (int) ((double) progresoActual / pesoArchivo * 100);
                 Platform.runLater(() -> progressProperty.set(progresoPercentage));
 
-                System.out.println(nombre + " - Progreso " + progresoActual + "MB de " + pesoArchivo + " MB " + " | Velocidad -----> " + velocidadActual + " Mb/s");
+                processProperty.setValue(nombre + " - Progreso " + progresoActual + "MB de " + pesoArchivo + " MB " + " | Velocidad -----> " + velocidadActual + " Mb/s" + "\n");
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
@@ -47,10 +51,11 @@ public class Downloads implements Runnable {
         System.out.println(nombre + " ha finalizado");
     }
 
-    public Downloads (String nombre, int velocidadDescarga, int pesoArchivo, IntegerProperty progressProperty) {
+    public Downloads (String nombre, int velocidadDescarga, int pesoArchivo, IntegerProperty progressProperty, StringProperty processProperty) {
         this.nombre = nombre;
         this.velocidadDescarga = velocidadDescarga;
         this.pesoArchivo = pesoArchivo;
         this.progressProperty = progressProperty;
+        this.processProperty = processProperty;
     }
 }
