@@ -21,8 +21,6 @@ public class Downloads implements Runnable {
     @Override
     public void run() {
 
-        System.out.println(nombre + " ha comenzado a descargarse");
-
         int progresoActual = 0;
 
         while (progresoActual < pesoArchivo && !stopRequested) {
@@ -59,12 +57,6 @@ public class Downloads implements Runnable {
 
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
-            }
-
-            if (stopRequested) {
-                System.out.println("La descarga de " + nombre + " ha sido detenido");
-            } else {
-                System.out.println(nombre + " ha finalizado");
             }
         }
     }
