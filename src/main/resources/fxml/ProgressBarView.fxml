@@ -8,23 +8,27 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<Pane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
+<Pane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #c0fef2;" xmlns="http://javafx.com/javafx/22" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <VBox alignment="CENTER" layoutX="66.0" layoutY="80.0" prefHeight="300.0" prefWidth="200.0" spacing="30.0">
          <children>
-            <Label text="Archivo1" />
+            <Label fx:id="firstProcessLabel" />
             <ProgressBar fx:id="firstProgressBar" prefWidth="200.0" progress="0.0" />
-            <Label text="Archivo2" />
+            <Label fx:id="secondProcessLabel" />
             <ProgressBar fx:id="secondProgressBar" prefWidth="200.0" progress="0.0" />
-            <Label text="Archivo3" />
+            <Label fx:id="thirdProcessLabel" />
             <ProgressBar fx:id="thirdProgressBar" prefWidth="200.0" progress="0.0" />
          </children>
          <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>
       </VBox>
-      <Button layoutX="132.0" layoutY="25.0" mnemonicParsing="false" onAction="#onDownloadAction" text="Descargar" />
+      <Button layoutX="132.0" layoutY="25.0" mnemonicParsing="false" onAction="#onDownloadAction">
+         <graphic>
+            <FontIcon iconColor="#2ce44b" iconLiteral="far-play-circle" iconSize="25" />
+         </graphic></Button>
       <VBox alignment="CENTER" layoutX="316.0" layoutY="80.0" prefHeight="300.0" prefWidth="270.0" spacing="3.0">
          <children>
             <Label text="Proceso de descarga" />
@@ -37,6 +41,9 @@
          </padding>
       </VBox>
       <Separator layoutX="297.0" layoutY="130.0" orientation="VERTICAL" prefHeight="200.0" />
-      <Button layoutX="425.0" layoutY="25.0" mnemonicParsing="false" onAction="#onStopAction" text="Terminar" />
+      <Button layoutX="425.0" layoutY="25.0" mnemonicParsing="false" onAction="#onStopAction">
+         <graphic>
+            <FontIcon iconColor="#e72929" iconLiteral="far-stop-circle" iconSize="25" />
+         </graphic></Button>
    </children>
 </Pane>

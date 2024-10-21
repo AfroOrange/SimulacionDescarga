@@ -15,7 +15,8 @@ public class Downloads implements Runnable {
     private final int velocidadDescarga;
     private final int pesoArchivo;
     private final IntegerProperty progressProperty;
-    private StringProperty processProperty;
+    private final StringProperty processProperty;
+    private volatile boolean stopRequested = false;
 
     @Override
     public void run() {
@@ -24,7 +25,7 @@ public class Downloads implements Runnable {
 
         int progresoActual = 0;
 
-        while (progresoActual < pesoArchivo) {
+        while (progresoActual < pesoArchivo && !stopRequested) {
             try {
                 int modificador = new Random().nextInt(velocidadDescarga);
                 if (modificador == 0) {
@@ -40,15 +41,32 @@ public class Downloads implements Runnable {
                 progresoActual++;
 
                 final int progresoPercentage = (int) ((double) progresoActual / pesoArchivo * 100);
-                Platform.runLater(() -> progressProperty.set(progresoPercentage));
 
-                processProperty.setValue(nombre + " - Progreso " + progresoActual + "MB de " + pesoArchivo + " MB " + " | Velocidad -----> " + velocidadActual + " Mb/s" + "\n");
+                final int finalProgresoActual = progresoActual;
+                final int finalVelocidadActual = velocidadActual;
+
+                // Update the progress bar and text on the JavaFX thread
+                Platform.runLater(() -> {
+                    // Update the progress bar
+                    progressProperty.set(progresoPercentage);
+
+                    // Update the download progress text
+                    processProperty.setValue(
+                            nombre + " - Progreso " + finalProgresoActual + "MB de " + pesoArchivo + " MB "
+                                    + "\n" + " | Velocidad -----> " + finalVelocidadActual + " Mb/s"
+                    );
+                });
+
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-        }
 
-        System.out.println(nombre + " ha finalizado");
+            if (stopRequested) {
+                System.out.println("La descarga de " + nombre + " ha sido detenido");
+            } else {
+                System.out.println(nombre + " ha finalizado");
+            }
+        }
     }
 
     public Downloads (String nombre, int velocidadDescarga, int pesoArchivo, IntegerProperty progressProperty, StringProperty processProperty) {
@@ -57,5 +75,13 @@ public class Downloads implements Runnable {
         this.pesoArchivo = pesoArchivo;
         this.progressProperty = progressProperty;
         this.processProperty = processProperty;
+    }
+
+    public void stopDownload() {
+        stopRequested = true;
+    }
+
+    public String getNombre() {
+        return nombre;
     }
 }

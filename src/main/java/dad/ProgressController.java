@@ -1,5 +1,6 @@
 package dad;
 
+import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -10,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
@@ -29,9 +31,13 @@ public class ProgressController implements Initializable {
     private final StringProperty secondProcessProperty = new SimpleStringProperty();
     private final StringProperty thirdProcessProperty = new SimpleStringProperty();;
 
-    private final Thread download1 = new Thread(new Downloads("Archivo1.jgp", 5, 200, firstProgressValueProperty(), firstProcessProperty));
-    private final Thread download2 = new Thread(new Downloads("Archivo2.iso", 10, 200, secondProgressValueProperty(), secondProcessProperty));
-    private final Thread download3 = new Thread(new Downloads("Archivo3.mp4", 20, 200, thirdProgressValueProperty(), thirdProcessProperty));
+    private final Downloads download1 = new Downloads("Mi_Imagen_Perfil.jgp", 5, 200, firstProgressValueProperty(), firstProcessProperty);
+    private final Downloads download2 = new Downloads("Mi_Película_Bichada.mp4", 10, 500, secondProgressValueProperty(), secondProcessProperty);
+    private final Downloads download3 = new Downloads("Mi_Juego_Elamigos.torrent", 20, 1000, thirdProgressValueProperty(), thirdProcessProperty);
+
+    private final Thread downloadtask1 = new Thread(download1);
+    private final Thread downloadtask2 = new Thread(download2);
+    private final Thread downloadtask3 = new Thread(download3);
 
     @FXML
     private Pane root;
@@ -54,6 +60,15 @@ public class ProgressController implements Initializable {
     @FXML
     private ProgressBar thirdProgressBar;
 
+    @FXML
+    private Label firstProcessLabel;
+
+    @FXML
+    private Label secondProcessLabel;
+
+    @FXML
+    private Label thirdProcessLabel;
+
     public ProgressController() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/ProgressBarView.fxml"));
@@ -69,6 +84,25 @@ public class ProgressController implements Initializable {
         firstProcess.textProperty().bind(firstProcessProperty);
         secondProcess.textProperty().bind(secondProcessProperty);
         thirdProcess.textProperty().bind(thirdProcessProperty);
+
+        firstProgressBar.progressProperty().bind(firstProgressValue.divide(100.0));
+        secondProgressBar.progressProperty().bind(secondProgressValue.divide(100.0));
+        thirdProgressBar.progressProperty().bind(thirdProgressValue.divide(100.0));
+
+        firstProgressValue.addListener(((observable, oldValue, newValue) -> onDescargaFinalizada()));
+        secondProgressValue.addListener(((observable, oldValue, newValue) -> onDescargaFinalizada()));
+        thirdProgressValue.addListener(((observable, oldValue, newValue) -> onDescargaFinalizada()));
+    }
+
+    private void onDescargaFinalizada() {
+        if (firstProgressValue.get() == 100 &&
+                secondProgressValue.get() == 100 &&
+                thirdProgressValue.get() == 100) {
+
+            Alert mensajeAviso = new Alert(Alert.AlertType.CONFIRMATION);
+            mensajeAviso.setContentText("Descarga finalizada con éxito");
+            mensajeAviso.show();
+        }
     }
 
     public IntegerProperty firstProgressValueProperty() {
@@ -90,29 +124,64 @@ public class ProgressController implements Initializable {
     @FXML
     void onStopAction(ActionEvent event) {
 
+        download1.stopDownload();
+        download2.stopDownload();
+        download3.stopDownload();
 
+        try {
+            downloadtask1.join();
+            downloadtask2.join();
+            downloadtask3.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
-        Alert mensajeAviso = new Alert(Alert.AlertType.NONE);
+        Platform.runLater(() -> {
+            firstProgressBar.progressProperty().unbind();
+            secondProgressBar.progressProperty().unbind();
+            thirdProgressBar.progressProperty().unbind();
 
-        mensajeAviso.setAlertType(Alert.AlertType.CONFIRMATION);
-        mensajeAviso.setContentText("Descarga detenida con éxito");
-        mensajeAviso.show();
+            firstProcessProperty.set("");
+            secondProcessProperty.set("");
+            thirdProcessProperty.set("");
+
+            // Reset the progress bars to 0
+            firstProgressBar.setProgress(0);
+            secondProgressBar.setProgress(0);
+            thirdProgressBar.setProgress(0);
+
+            // Show confirmation alert
+            Alert mensajeAviso = new Alert(Alert.AlertType.WARNING);
+            mensajeAviso.setContentText("Descarga detenida");
+            mensajeAviso.show();
+            });
     }
 
     @FXML
     void onDownloadAction(ActionEvent event) {
 
-        // Activación del Botón
+        // Bind the progress bars to the new progress values
         firstProgressBar.progressProperty().bind(firstProgressValue.divide(100.0));
         secondProgressBar.progressProperty().bind(secondProgressValue.divide(100.0));
         thirdProgressBar.progressProperty().bind(thirdProgressValue.divide(100.0));
 
-        Thread download1 = new Thread(new Downloads("Archivo1.jgp", 5, 200, firstProgressValueProperty(), firstProcessProperty));
-        Thread download2 = new Thread(new Downloads("Archivo2.iso", 10, 200, secondProgressValueProperty(), secondProcessProperty));
-        Thread download3 = new Thread(new Downloads("Archivo3.mp4", 20, 200, thirdProgressValueProperty(), thirdProcessProperty));
+        // Create new download task instances
+        Downloads download1 = new Downloads("Imagen_Nueva.jgp", 5, 200, firstProgressValueProperty(), firstProcessProperty);
+        Downloads download2 = new Downloads("Música_Fiesta.mp4", 10, 200, secondProgressValueProperty(), secondProcessProperty);
+        Downloads download3 = new Downloads("Drivers_GPU.exe", 20, 200, thirdProgressValueProperty(), thirdProcessProperty);
 
-        download1.start();
-        download2.start();
-        download3.start();
+        firstProcessLabel.setText(download1.getNombre());
+        secondProcessLabel.setText(download2.getNombre());
+        thirdProcessLabel.setText(download3.getNombre());
+
+        // Create new threads to execute the downloads
+        Thread downloadTask1 = new Thread(download1);
+        Thread downloadTask2 = new Thread(download2);
+        Thread downloadTask3 = new Thread(download3);
+
+        // Start the new threads
+        downloadTask1.start();
+        downloadTask2.start();
+        downloadTask3.start();
     }
 }
